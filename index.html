@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gurú Nutricional IA</title>
+    <!-- Enlace a la hoja de estilos CSS -->
+    <link rel="stylesheet" href="style.css">
+    <!-- Carga de Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Carga de la fuente Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- El script se carga al final del body para asegurar que el DOM esté listo -->
+</head>
+<body class="bg-gray-100 text-gray-800 flex items-center justify-center min-h-screen p-4">
+
+    <!-- Modal de Perfil de Usuario -->
+    <div id="user-profile-modal" class="hidden fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md">
+            <h2 class="text-2xl font-bold text-center mb-4">Crea tu Perfil Nutricional</h2>
+            <p class="text-center text-gray-600 mb-6">Completa tus datos para personalizar tu plan.</p>
+            <div class="space-y-4">
+                <div>
+                    <label for="age" class="block text-sm font-medium text-gray-700">Edad</label>
+                    <input type="number" id="age" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                </div>
+                <div>
+                    <label for="height" class="block text-sm font-medium text-gray-700">Altura (cm)</label>
+                    <input type="number" id="height" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                </div>
+                <div>
+                    <label for="weight" class="block text-sm font-medium text-gray-700">Peso Actual (kg)</label>
+                    <input type="number" id="weight" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                </div>
+                <div>
+                    <label for="gender" class="block text-sm font-medium text-gray-700">Sexo</label>
+                    <select id="gender" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                        <option value="M">Masculino</option>
+                        <option value="F">Femenino</option>
+                    </select>
+                </div>
+                 <div>
+                    <label for="activityKey" class="block text-sm font-medium text-gray-700">Nivel de Actividad Típico</label>
+                    <select id="activityKey" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                         <option value="sedentary">Sedentario (oficina)</option>
+                         <option value="light">Ligero (caminatas suaves)</option>
+                         <option value="moderate">Moderado (ejercicio 1-2 veces/sem)</option>
+                         <option value="active">Activo (ejercicio regular)</option>
+                    </select>
+                </div>
+                <button id="save-profile-button" class="w-full bg-blue-600 text-white font-semibold py-3 px-4 rounded-lg hover:bg-blue-700">Guardar y Crear Plan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Creación de Plan de Pérdida de Peso -->
+    <div id="plan-setup-modal" class="hidden fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-lg">
+            <h2 class="text-2xl font-bold text-center mb-4">Crea tu Plan de Pérdida de Peso</h2>
+            <p class="text-center text-gray-600 mb-6">Elige cómo quieres alcanzar tu objetivo.</p>
+
+            <div class="mb-4 border-b border-gray-200">
+                <nav class="flex -mb-px" id="plan-tabs">
+                    <button data-plan-type="byPace" class="plan-tab-button border-b-2 border-blue-500 text-blue-600 py-4 px-1 text-center font-medium w-1/2">Por Ritmo</button>
+                    <button data-plan-type="byKg" class="plan-tab-button border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 py-4 px-1 text-center font-medium w-1/2">Por Meta Específica</button>
+                </nav>
+            </div>
+
+            <div id="plan-content" class="space-y-4">
+                <div id="plan-byPace" class="plan-type-content space-y-4">
+                    <div>
+                        <label for="pace" class="block text-sm font-medium text-gray-700">Ritmo de pérdida de peso</label>
+                        <select id="pace" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                            <option value="0.25">Suave (~0.25 kg por semana)</option>
+                            <option value="0.5" selected>Estándar (~0.5 kg por semana)</option>
+                            <option value="0.75">Agresivo (~0.75 kg por semana)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="pace-days" class="block text-sm font-medium text-gray-700">Duración del plan (días)</label>
+                        <input type="number" id="pace-days" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" value="30">
+                    </div>
+                </div>
+                <div id="plan-byKg" class="plan-type-content hidden space-y-4">
+                    <div>
+                        <label for="kg-goal" class="block text-sm font-medium text-gray-700">¿Cuántos kilogramos quieres perder?</label>
+                        <input type="number" id="kg-goal" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" value="3">
+                    </div>
+                    <div>
+                        <label for="kg-days" class="block text-sm font-medium text-gray-700">¿En cuántos días quieres lograrlo?</label>
+                        <input type="number" id="kg-days" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" value="45">
+                    </div>
+                </div>
+            </div>
+
+            <div id="plan-preview" class="mt-6 p-4 bg-gray-50 rounded-lg hidden">
+                <h3 class="font-semibold text-lg text-center mb-2">Resumen de tu Plan</h3>
+                <div id="plan-summary-text" class="text-center text-gray-800"></div>
+                <div id="plan-warnings" class="mt-3 text-sm text-yellow-800 bg-yellow-100 p-3 rounded-md"></div>
+            </div>
+
+            <div class="flex mt-6 gap-4">
+                <button id="calculate-plan-button" class="w-1/2 bg-gray-600 text-white font-semibold py-3 px-4 rounded-lg hover:bg-gray-700">Previsualizar Plan</button>
+                <button id="save-plan-button" class="w-1/2 bg-green-600 text-white font-semibold py-3 px-4 rounded-lg hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed">Guardar e Iniciar Plan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contenido Principal -->
+    <main class="bg-white rounded-2xl shadow-xl p-6 sm:p-8 w-full max-w-2xl">
+        <div class="text-center mb-4">
+             <div id="datetime-display" class="text-sm text-gray-500 mb-2"></div>
+            <h1 class="text-3xl sm:text-4xl font-bold text-gray-900">Gurú Nutricional IA 🥗</h1>
+            <p class="text-gray-500 mt-2">Sube una foto y obtén un análisis nutricional completo.</p>
+        </div>
+
+        <div id="nutrition-tracker" class="hidden text-center bg-blue-50 p-4 rounded-lg mb-6">
+            <h2 class="text-xl font-bold text-blue-800">Mi Progreso Diario</h2>
+            <div class="grid grid-cols-3 sm:grid-cols-5 items-center mt-2 gap-2">
+                <div>
+                    <div id="calorie-goal" class="text-2xl font-bold text-blue-600"></div>
+                    <div class="text-sm text-gray-600">Kcal Objetivo</div>
+                </div>
+                <div class="hidden sm:block text-3xl font-light text-gray-400">-</div>
+                <div>
+                    <div id="calories-consumed" class="text-2xl font-bold text-green-600"></div>
+                    <div class="text-sm text-gray-600">Kcal Consumidas</div>
+                </div>
+                 <div class="hidden sm:block text-3xl font-light text-gray-400">=</div>
+                <div>
+                    <div id="calories-remaining" class="text-2xl font-bold text-blue-600"></div>
+                    <div class="text-sm text-gray-600">Kcal Restantes</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="space-y-4">
+            <div class="file-input-container bg-gray-50">
+                <div id="upload-prompt" class="text-center text-gray-500">
+                    <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48"><path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                    <p class="mt-1">Haz clic para subir una foto</p>
+                </div>
+                <img id="image-preview" class="hidden" alt="Vista previa de la imagen">
+                <input id="file-input" type="file" accept="image/*">
+            </div>
+            <button id="analyze-button" class="w-full bg-blue-600 text-white font-semibold py-3 px-4 rounded-lg hover:bg-blue-700 disabled:bg-gray-400">Analizar Plato</button>
+        </div>
+
+        <div id="results-container" class="mt-8 hidden">
+            <div id="loader" class="flex justify-center items-center py-8 hidden">
+                <div class="loader"></div><p class="ml-4 text-gray-600">Analizando...</p>
+            </div>
+            <div id="result-content" class="hidden">
+                <h2 id="dish-name" class="text-2xl font-bold text-center mb-2"></h2>
+                <div id="portion-analysis-text" class="text-center text-sm text-gray-700 bg-yellow-100 p-3 rounded-md mb-6 border"></div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-3 text-center">Ingredientes y Calorías (en la foto)</h3>
+                    <ul id="cart-list" class="space-y-2"></ul>
+                </div>
+                 <button id="add-calories-button" class="hidden mt-6 w-full bg-green-500 text-white font-bold py-3 px-4 rounded-lg hover:bg-green-600 flex items-center justify-center text-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
+                    Añadir a mi día
+                </button>
+            </div>
+            <div id="error-message" class="hidden text-center text-red-600 bg-red-100 p-4 rounded-lg"></div>
+        </div>
+        
+        <div class="text-center mt-8">
+            <p class="text-xs text-gray-400">Versión 1.2</p>
+        </div>
+    </main>
+
+    <!-- Enlace al archivo JavaScript -->
+    <script src="script.js"></script>
+</body>
+</html>
+
